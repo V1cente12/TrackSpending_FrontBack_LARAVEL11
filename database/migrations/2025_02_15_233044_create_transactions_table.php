@@ -19,6 +19,10 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $table->date('date');
             $table->text('description')->nullable();
+            $table->foreignId('payment_method_id') 
+                  ->nullable()
+                  ->constrained('payment_methods')
+                  ->onDelete('set null'); 
             $table->timestamps();
         });
     }

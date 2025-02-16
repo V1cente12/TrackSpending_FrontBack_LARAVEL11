@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['Card', 'Cash', 'QR']); 
+            $table->enum('name', ['card', 'cash', 'qr']); 
             $table->timestamps();
         });
     }
