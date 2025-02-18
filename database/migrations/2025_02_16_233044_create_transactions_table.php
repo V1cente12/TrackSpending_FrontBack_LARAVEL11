@@ -14,15 +14,13 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained('categories')->onDelete('set null');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+            $table->foreignId('payment_method_id')->constrained('payment_methods')->onDelete('cascade'); 
             $table->enum('type', ['income', 'expense']);
             $table->decimal('amount', 10, 2);
             $table->date('date');
             $table->text('description')->nullable();
-            $table->foreignId('payment_method_id') 
-                  ->nullable()
-                  ->constrained('payment_methods')
-                  ->onDelete('set null'); 
+           
             $table->timestamps();
         });
     }
