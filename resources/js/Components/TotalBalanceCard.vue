@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white p-6 rounded-lg shadow-lg">
+  <div class="bg-white p-3 rounded-lg shadow-lg">
     <h3 class="text-xl font-semibold text-gray-700">Total Balance</h3>
-    <p class="text-3xl font-bold text-green-600 mt-2">${{ amount }}</p>
+    <p class="text-3xl font-bold text-green-600 mt-2">Bs {{ amount }}</p>
   </div>
 </template>
 
