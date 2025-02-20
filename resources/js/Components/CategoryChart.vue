@@ -1,7 +1,10 @@
 <template>
-  <div class="bg-black p-6 rounded-lg shadow-lg text-white">
-    <h3 class="text-xl font-semibold mb-4 text-center">Expenses</h3>
-    <Bar :data="chartData" :options="chartOptions" />
+  <div class="bg-white p-6 rounded-lg shadow-lg text-gray-800">
+    <div class="overflow-x-auto">
+      <div class="min-w-[750px]">
+        <Bar :data="chartData" :options="chartOptions" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -29,22 +32,25 @@ export default {
   setup() {
     // Datos ficticios con emojis en las etiquetas
     const chartData = ref({
-      labels: ['👖', '🥑', '🛒', '💎'], // Emojis en lugar de texto
+      labels: ['👖', '🥑', '🛒', '💎', '💎', '💎','💎', '💎', '💎'],
       datasets: [
         {
           label: 'Expenses',
-          backgroundColor: ['#FF3B30', '#FF9500', '#FFD60A', '#32D74B'],
-          borderRadius: 10, // Bordes redondeados
-          barPercentage: 0.5, // Tamaño de las barras
-          data: [500, 435, 350, 50]
+          backgroundColor: ['#FF3B30', '#FF9500', '#FFD60A', '#32D74B', '#32D74B', '#32D74B','#32D74B', '#32D74B', '#32D74B'],
+          borderSkipped: false,  // Esto permite que se muestren todos los bordes
+          borderRadius: 10,
+          barPercentage: 1,
+          data: [500, 435, 350, 50, 350, 350,50, 350, 350]
         }
       ]
     })
 
     const chartOptions = ref({
       responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 2,  // Añadido para controlar la altura
       plugins: {
-        legend: { display: false }, // Ocultamos la leyenda
+        legend: { display: false },
         tooltip: {
           callbacks: {
             label: function (tooltipItem) {
@@ -55,14 +61,19 @@ export default {
       },
       scales: {
         x: {
-          grid: { display: false }, // Ocultar líneas del eje X
+          grid: { display: false },
+          border: { display: false },
           ticks: {
-            font: { size: 20 }, // Tamaño de los emojis
-            color: '#FFFFFF'
-          }
+            font: { size: 20 },
+            color: '#1F2937'
+          },
+          min: 0,
+          maxBarThickness: 120,
+          barPercentage: 1,      // Máximo ancho posible
+          categoryPercentage: 1   // Sin espacio entre categorías
         },
         y: {
-          display: false // Ocultar el eje Y para diseño más limpio
+          display: false
         }
       }
     })
@@ -73,5 +84,12 @@ export default {
 </script>
 
 <style scoped>
-/* Si necesitas agregar más estilos personalizados */
+.overflow-x-auto {
+  scrollbar-width: none; /* Para Firefox */
+  -ms-overflow-style: none; /* Para Internet Explorer y Edge */
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  display: none; /* Para Chrome, Safari y Opera */
+}
 </style>
