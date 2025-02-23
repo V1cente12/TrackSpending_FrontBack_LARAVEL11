@@ -9,7 +9,10 @@ class Currency extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'code', 'name', 'exchange_rate',
-    ];
+    protected $fillable = ['name', 'code', 'symbol'];
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'currency_id');
+    }
 }
