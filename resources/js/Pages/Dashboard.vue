@@ -6,9 +6,11 @@ import CategoryChart from '@/Components/CategoryChart.vue';
 import AddTransactionButton from '@/Components/AddTransactionButton.vue';
 import NavigationBar from '@/Components/NavigationBar.vue';
 
-// Datos ficticios para probar
-const totalBalance = 5200.00;
-const monthlySpending = 1350.00;
+const props = defineProps({
+    currencySymbol: String,
+    totalBalance: Number,
+});
+
 </script>
 
 <template>
@@ -21,7 +23,11 @@ const monthlySpending = 1350.00;
 
                     <!-- Tarjetas con saldo total y gasto del mes -->
                     <div class="bg-gray-200 bg-opacity-25 flex flex-row gap-6 p-6 lg:p-8">
-                        <TotalBalanceCard :amount="totalBalance" class="flex-1" />
+                        <TotalBalanceCard 
+                            :amount="totalBalance" 
+                            :currency-symbol="currencySymbol"
+                            class="flex-1" 
+                        />
                         <MonthlySpendingCard :amount="monthlySpending" class="flex-1" />
                     </div>
 
