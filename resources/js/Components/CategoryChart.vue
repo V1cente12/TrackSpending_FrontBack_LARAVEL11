@@ -40,7 +40,7 @@ export default {
           borderSkipped: false,  // Esto permite que se muestren todos los bordes
           borderRadius: 10,
           barPercentage: 1,
-          data: [500, 435, 350, 50, 350, 350,50, 350, 350]
+          data: [200, 435, 500, 150, 350, 350,50, 350, 350]
         }
       ]
     })
@@ -48,7 +48,7 @@ export default {
     const chartOptions = ref({
       responsive: true,
       maintainAspectRatio: true,
-      aspectRatio: 2,  // Añadido para controlar la altura
+      aspectRatio: 2.3,  // Añadido para controlar la altura
       plugins: {
         legend: { display: false },
         tooltip: {
