@@ -18,6 +18,10 @@ class DashboardController extends Controller
         if ($user->total_balance === null || $user->total_balance == 0) {
             return redirect()->route('initial-balance');
         }
+        dd($user->categories());
+        if (!$user->categories()->exists()) {
+            return redirect()->route('select-category');
+        }
             
         return $this->show();
     }
