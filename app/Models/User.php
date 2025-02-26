@@ -86,4 +86,10 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Currency::class, 'currency_id');
     }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class)
+                    ->using(CategoryUser::class);
+    }
 }
