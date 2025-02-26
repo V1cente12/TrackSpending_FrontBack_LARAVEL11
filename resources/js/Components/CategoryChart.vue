@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white p-6 rounded-lg shadow-lg text-gray-800">
-    <div class="overflow-x-auto">
-      <div class="min-w-[750px]">
+  <div class="bg-white p-6 rounded-lg shadow-lg text-gray-800 overflow-hidden">
+    <div class="overflow-x-auto scrollbar-hide" style="width: 100%; touch-action: auto;">
+      <div :style="{ width: containerWidth + 'px', height: '300px' }">
         <Bar :data="chartData" :options="chartOptions" />
       </div>
     </div>
@@ -17,45 +17,49 @@ import {
   BarElement,
   Title,
   Tooltip,
-  Legend
 } from 'chart.js'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
-// Registramos los módulos necesarios de Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip)
 
 export default {
   name: 'CategoryChart',
-  components: {
-    Bar
-  },
+  components: { Bar },
   setup() {
-    // Datos ficticios con emojis en las etiquetas
-    const chartData = ref({
-      labels: ['👖', '🥑', '🛒', '💎', '💎', '💎','💎', '💎', '💎'],
-      datasets: [
-        {
-          label: 'Expenses',
-          backgroundColor: ['#FF3B30', '#FF9500', '#FFD60A', '#32D74B', '#32D74B', '#32D74B','#32D74B', '#32D74B', '#32D74B'],
-          borderSkipped: false,  // Esto permite que se muestren todos los bordes
-          borderRadius: 10,
-          barPercentage: 1,
-          data: [200, 435, 500, 150, 350, 350,50, 350, 350]
-        }
-      ]
+    const data = [200, 350, 180, 420,200, 350, 180, 420]
+    const categories = ["📱", "🍔", "🚗", "🏠","📱", "🍔", "🚗", "🏠"]
+    const colors = ["#FF4F4F", "#FFA500", "#FFD700", "#00C853","#FF4F4F", "#FFA500", "#FFD700", "#00C853"]
+
+    const containerWidth = computed(() => {
+      return Math.max(data.length * 100, 200)
     })
 
-    const chartOptions = ref({
+    const chartData = {
+      labels: categories,
+      datasets: [{
+        data: data,
+        backgroundColor: colors,
+        borderSkipped: false,  // Importante para que se muestren todos los bordes
+        borderRadius: 8,
+        barPercentage: 0.9,
+        categoryPercentage: 0.8,
+        barThickness: 55,
+        maxBarThickness: 55
+      }]
+    }
+
+    const chartOptions = {
       responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: 2.3,  // Añadido para controlar la altura
+      maintainAspectRatio: false,
+      animation: {
+        duration: 800,
+        easing: 'easeOutQuart'
+      },
       plugins: {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: function (tooltipItem) {
-              return `Bs ${tooltipItem.raw}`
-            }
+            label: (context) => `Bs ${context.raw}`
           }
         }
       },
@@ -64,32 +68,36 @@ export default {
           grid: { display: false },
           border: { display: false },
           ticks: {
-            font: { size: 20 },
-            color: '#1F2937'
-          },
-          min: 0,
-          maxBarThickness: 120,
-          barPercentage: 1,      // Máximo ancho posible
-          categoryPercentage: 1   // Sin espacio entre categorías
+            font: { size: 20 }
+          }
         },
         y: {
-          display: false
+          display: false,
+          grid: { display: false },
+          max: 500,
+          min: 0
         }
+      },
+      layout: {
+        padding: 0
       }
-    })
+    }
 
-    return { chartData, chartOptions }
+    return {
+      chartData,
+      chartOptions,
+      containerWidth
+    }
   }
 }
 </script>
 
-<style scoped>
-.overflow-x-auto {
-  scrollbar-width: none; /* Para Firefox */
-  -ms-overflow-style: none; /* Para Internet Explorer y Edge */
+<style>
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
-
-.overflow-x-auto::-webkit-scrollbar {
-  display: none; /* Para Chrome, Safari y Opera */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>
