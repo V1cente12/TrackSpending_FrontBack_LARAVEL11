@@ -1,8 +1,8 @@
 <template>
   <div class="bg-white p-6 rounded-lg shadow-lg text-gray-800 overflow-hidden">
     <div class="overflow-x-auto scrollbar-hide" style="width: 100%; touch-action: auto;">
-      <div :style="{ width: containerWidth + 'px', height: '300px' }">
-        <Bar :data="chartData" :options="chartOptions" />
+      <div :style="{ width: containerWidth + 'px', height: '300px', marginLeft: data.length === 1 ? '-200px' : '0' }">
+        <Bar :data="chartData" :options="chartOptions" :plugins="[labelsPlugin]" />
       </div>
     </div>
   </div>
@@ -26,23 +26,52 @@ export default {
   name: 'CategoryChart',
   components: { Bar },
   setup() {
-    const data = [200, 350, 180, 420,200, 350, 180, 420]
-    const categories = ["📱", "🍔", "🚗", "🏠","📱", "🍔", "🚗", "🏠"]
-    const colors = ["#FF4F4F", "#FFA500", "#FFD700", "#00C853","#FF4F4F", "#FFA500", "#FFD700", "#00C853"]
+    const data = [1500, 1000, 500]
+    const categories = ["🚌", "👖", "🌮"]
+    const colors = ['#424242', '#424242', '#424242']
 
     const containerWidth = computed(() => {
-      return Math.max(data.length * 100, 200)
+      return Math.max(data.length * 80, 200)
     })
+
+    const labelsPlugin = {
+      id: 'labelsInBars',
+      afterDraw: (chart) => {
+        const ctx = chart.ctx;
+        const meta = chart.getDatasetMeta(0);
+        
+        meta.data.forEach((bar, index) => {
+          const value = data[index];
+          const label = categories[index];
+          const isZero = value === 0;
+          
+          ctx.save();
+          ctx.fillStyle = 'white';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          
+          // Emoji
+          ctx.font = '20px Arial';
+          const emojiY = isZero ? bar.y + 25 : bar.y + bar.height - 35;
+          ctx.fillText(label, bar.x, emojiY);
+          
+          // Valor (incluyendo cero)
+          ctx.font = 'bold 15px arial';
+          const valueY = isZero ? bar.y + 45 : bar.y + bar.height - 15;
+          ctx.fillText(value, bar.x, valueY);
+          
+          ctx.restore();
+        });
+      }
+    }
 
     const chartData = {
       labels: categories,
       datasets: [{
-        data: data,
+        data: data.map(v => v === 0 ? 80 : v),
         backgroundColor: colors,
-        borderSkipped: false,  // Importante para que se muestren todos los bordes
+        borderSkipped: false,
         borderRadius: 8,
-        barPercentage: 0.9,
-        categoryPercentage: 0.8,
         barThickness: 55,
         maxBarThickness: 55
       }]
@@ -58,9 +87,7 @@ export default {
       plugins: {
         legend: { display: false },
         tooltip: {
-          callbacks: {
-            label: (context) => `Bs ${context.raw}`
-          }
+          enabled: false
         }
       },
       scales: {
@@ -68,31 +95,36 @@ export default {
           grid: { display: false },
           border: { display: false },
           ticks: {
-            font: { size: 20 }
-          }
+            display: false
+          },
+          barPercentage: 0.4,
+          categoryPercentage: 0.8
         },
         y: {
           display: false,
           grid: { display: false },
-          max: 500,
-          min: 0
+          max: 2000,
+          min: 0,
+          ticks: {
+            beginAtZero: true
+          }
         }
-      },
-      layout: {
-        padding: 0
       }
     }
 
     return {
       chartData,
       chartOptions,
-      containerWidth
+      containerWidth,
+      data,
+      labelsPlugin
     }
   }
 }
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
