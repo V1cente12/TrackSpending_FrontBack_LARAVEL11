@@ -1,14 +1,13 @@
 <script setup>
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { useForm } from '@inertiajs/vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 const props = defineProps({
     category: Array,
 });
 
 const form = useForm({
-    category_id: '',
+    category_id: [],
 });
 
 const submit = () => {
@@ -17,51 +16,53 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Select Categories
-            </h2>
-        </template>
+    <AppLayout title="Select Categories">
+        <div class="h-full flex flex-col items-center justify-start pt-12 px-4">
+            <div class="w-full max-w-md text-center">
+                <h2 class="text-2xl font-bold mb-3">Select your categories</h2>
+                <p class="text-gray-600 mb-8">Choose the categories you want to track</p>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
-                        <form @submit.prevent="submit" class="space-y-6">
-                            <div>
-                                <h3 class="text-lg font-medium">Please select your categories</h3>
-                                <p class="mt-1 text-sm text-gray-600">
-                                    Choose the categories you want to track your expenses with.
-                                </p>
+                <div class="grid grid-cols-3 gap-2 mb-8">
+                    <label 
+                        v-for="cat in category" 
+                        :key="cat.id" 
+                        :for="'category-' + cat.id"
+                        class="relative cursor-pointer"
+                    >
+                        <input
+                            type="checkbox"
+                            :id="'category-' + cat.id"
+                            :value="cat.id"
+                            v-model="form.category_id"
+                            class="sr-only peer"
+                        >
+                        <div class="p-2 bg-white border-2 rounded-lg transition-all duration-200
+                                    peer-checked:border-indigo-500 peer-checked:bg-indigo-50
+                                    hover:border-gray-300 group">
+                            <div class="flex flex-col items-center justify-center min-h-[60px]">
+                                <span class="text-xs font-medium text-gray-900 group-hover:text-indigo-600">
+                                    {{ cat.name }}
+                                </span>
+                                <span class="text-[10px] text-gray-500">
+                                    {{ cat.type }}
+                                </span>
                             </div>
-
-                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                <div v-for="cat in category" :key="cat.id" class="flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        :id="'category-' + cat.id"
-                                        :value="cat.id"
-                                        v-model="form.category_id"
-                                        class="mr-2"
-                                    >
-                                    <label :for="'category-' + cat.id">
-                                        {{ cat.name }}
-                                    </label>
-                                </div>
+                            <div class="absolute top-1 right-1 opacity-0 peer-checked:opacity-100 text-indigo-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
                             </div>
-
-                            <div v-if="form.errors.category_id" class="text-red-500">
-                                {{ form.errors.category_id }}
-                            </div>
-
-                            <PrimaryButton :disabled="form.processing">
-                                Continue
-                            </PrimaryButton>
-                        </form>
-                    </div>
+                        </div>
+                    </label>
                 </div>
+
+                <button 
+                    @click="submit"
+                    class="w-full bg-blue-500 text-white rounded-lg py-4 font-semibold hover:bg-blue-600"
+                    :disabled="form.processing">
+                    Next
+                </button>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AppLayout>
 </template>

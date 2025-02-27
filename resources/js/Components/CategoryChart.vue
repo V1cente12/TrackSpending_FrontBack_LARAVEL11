@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white p-6 rounded-lg shadow-lg text-gray-800 overflow-hidden">
     <div class="overflow-x-auto scrollbar-hide" style="width: 100%; touch-action: auto;">
-      <div :style="{ width: containerWidth + 'px', height: '300px', marginLeft: data.length === 1 ? '-200px' : '0' }">
+      <div :style="{ width: containerWidth + 'px', height: '300px', marginLeft: categories.length === 1 ? '-200px' : '0' }">
         <Bar :data="chartData" :options="chartOptions" :plugins="[labelsPlugin]" />
       </div>
     </div>
@@ -18,20 +18,23 @@ import {
   Title,
   Tooltip,
 } from 'chart.js'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip)
 
 export default {
   name: 'CategoryChart',
   components: { Bar },
-  setup() {
-    const data = [1500, 1000, 500]
-    const categories = ["🚌", "👖", "🌮"]
-    const colors = ['#424242', '#424242', '#424242']
-
+  props: {
+    categories: {
+      type: Array,
+      required: true,
+      default: () => []
+    }
+  },
+  setup(props) {
     const containerWidth = computed(() => {
-      return Math.max(data.length * 80, 200)
+      return Math.max(props.categories.length * 80, 200)
     })
 
     const labelsPlugin = {
@@ -41,8 +44,8 @@ export default {
         const meta = chart.getDatasetMeta(0);
         
         meta.data.forEach((bar, index) => {
-          const value = data[index];
-          const label = categories[index];
+          const category = props.categories[index];
+          const value = Math.abs(category.total_amount);
           const isZero = value === 0;
           
           ctx.save();
@@ -50,12 +53,12 @@ export default {
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
           
-          // Emoji
+          // Category Name
           ctx.font = '20px Arial';
-          const emojiY = isZero ? bar.y + 25 : bar.y + bar.height - 35;
-          ctx.fillText(label, bar.x, emojiY);
+          const nameY = isZero ? bar.y + 25 : bar.y + bar.height - 35;
+          ctx.fillText(category.name, bar.x, nameY);
           
-          // Valor (incluyendo cero)
+          // Amount Value
           ctx.font = 'bold 15px arial';
           const valueY = isZero ? bar.y + 45 : bar.y + bar.height - 15;
           ctx.fillText(value, bar.x, valueY);
@@ -65,17 +68,20 @@ export default {
       }
     }
 
-    const chartData = {
-      labels: categories,
+    const chartData = computed(() => ({
+      labels: props.categories.map(cat => cat.name),
       datasets: [{
-        data: data.map(v => v === 0 ? 80 : v),
-        backgroundColor: colors,
+        data: props.categories.map(cat => {
+          const value = Math.abs(cat.total_amount);
+          return value === 0 ? 10 : value;
+        }),
+        backgroundColor: Array(props.categories.length).fill('#424242'),
         borderSkipped: false,
         borderRadius: 8,
         barThickness: 55,
         maxBarThickness: 55
       }]
-    }
+    }))
 
     const chartOptions = {
       responsive: true,
@@ -103,8 +109,8 @@ export default {
         y: {
           display: false,
           grid: { display: false },
-          max: 2000,
           min: 0,
+          max: Math.max(...props.categories.map(cat => Math.abs(cat.total_amount || 0))) * 1.2 || 100,
           ticks: {
             beginAtZero: true
           }
@@ -116,7 +122,6 @@ export default {
       chartData,
       chartOptions,
       containerWidth,
-      data,
       labelsPlugin
     }
   }

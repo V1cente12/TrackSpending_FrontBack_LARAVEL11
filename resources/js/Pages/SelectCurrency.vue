@@ -1,3 +1,19 @@
+<script setup>
+import AppLayout from '@/Layouts/AppLayout.vue';
+import { useForm } from '@inertiajs/vue3';
+
+const props = defineProps({
+    currencies: Array
+});
+
+const form = useForm({
+    currency_id: ''
+});
+
+const submitForm = () => {
+    form.post(route('set-currency'));
+};
+</script>
 <template>
     <AppLayout title="Select Currency">
         <div class="h-full flex flex-col items-center justify-start pt-12 px-4">
@@ -30,19 +46,3 @@
     </AppLayout>
 </template>
 
-<script setup>
-import AppLayout from '@/Layouts/AppLayout.vue';
-import { useForm } from '@inertiajs/vue3';
-
-const props = defineProps({
-    currencies: Array
-});
-
-const form = useForm({
-    currency_id: ''
-});
-
-const submitForm = () => {
-    form.post(route('set-currency'));
-};
-</script>
