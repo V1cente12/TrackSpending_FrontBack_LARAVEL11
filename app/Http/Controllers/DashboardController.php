@@ -5,9 +5,17 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\TransactionStatsRepository;
 
 class DashboardController extends Controller
 {
+    protected $statsRepository;
+
+    public function __construct(TransactionStatsRepository $statsRepository)
+    {
+        $this->statsRepository = $statsRepository;
+    }
+
     public function index()
     {
         $user = Auth::user();
@@ -18,7 +26,7 @@ class DashboardController extends Controller
         if ($user->total_balance === null || $user->total_balance == 0) {
             return redirect()->route('initial-balance');
         }
-        dd($user->categories());
+       
         if (!$user->categories()->exists()) {
             return redirect()->route('select-category');
         }
@@ -26,12 +34,18 @@ class DashboardController extends Controller
         return $this->show();
     }
 
-    public function show(){
+    public function show()
+    {
         /** @var User $user */
         $user = Auth::user();
         $currencySymbol = $user->currency()->first()->symbol;
         $totalBalance = $user->total_balance;
+        $categories = $this->statsRepository->getCategoryStats($user);
 
-        return Inertia::render('Dashboard', compact('currencySymbol', 'totalBalance'));
+        return Inertia::render('Dashboard', [
+            'currencySymbol' => $currencySymbol,
+            'totalBalance' => $totalBalance,
+            'categories' => $categories
+        ]);
     }
 }
