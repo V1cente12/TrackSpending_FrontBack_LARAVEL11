@@ -11,28 +11,28 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             // Income Categories
-            ['name' => 'Salary', 'type' => 'income'],
-            ['name' => 'Debt Collection', 'type' => 'income'],
-            ['name' => 'Freelance Work', 'type' => 'income'],
-            ['name' => 'Investments', 'type' => 'income'],
-            ['name' => 'Rental Income', 'type' => 'income'],
-            ['name' => 'Bonus', 'type' => 'income'],
+            ['name' => 'Salary', 'type' => 'income', 'icon' => '💰', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Debt Collection', 'type' => 'income', 'icon' => '💵', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Freelance Work', 'type' => 'income', 'icon' => '💻', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Investments', 'type' => 'income', 'icon' => '📈', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Rental Income', 'type' => 'income', 'icon' => '🏠', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Bonus', 'type' => 'income', 'icon' => '🎁', 'created_at' => now(), 'updated_at' => now()],
 
             // Expense Categories
-            ['name' => 'Food & Groceries', 'type' => 'expense'],
-            ['name' => 'Transportation', 'type' => 'expense'],
-            ['name' => 'Entertainment', 'type' => 'expense'],
-            ['name' => 'Electronics', 'type' => 'expense'],
-            ['name' => 'Utilities', 'type' => 'expense'],
-            ['name' => 'Rent/Housing', 'type' => 'expense'],
-            ['name' => 'Healthcare', 'type' => 'expense'],
-            ['name' => 'Clothing', 'type' => 'expense'],
-            ['name' => 'Education', 'type' => 'expense'],
-            ['name' => 'Loans Given', 'type' => 'expense'],
-            ['name' => 'Restaurants', 'type' => 'expense'],
-            ['name' => 'Gaming', 'type' => 'expense'],
-            ['name' => 'Internet & Phone', 'type' => 'expense'],
-            ['name' => 'Travel', 'type' => 'expense'],
+            ['name' => 'Food & Groceries', 'type' => 'expense', 'icon' => '🛒', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Transportation', 'type' => 'expense', 'icon' => '🚗', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Entertainment', 'type' => 'expense', 'icon' => '🎬', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Electronics', 'type' => 'expense', 'icon' => '📱', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Utilities', 'type' => 'expense', 'icon' => '💡', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Rent/Housing', 'type' => 'expense', 'icon' => '🏢', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Healthcare', 'type' => 'expense', 'icon' => '🏥', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Clothing', 'type' => 'expense', 'icon' => '👕', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Education', 'type' => 'expense', 'icon' => '📚', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Loans Given', 'type' => 'expense', 'icon' => '🏦', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Restaurants', 'type' => 'expense', 'icon' => '🍽️', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Gaming', 'type' => 'expense', 'icon' => '🎮', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Internet & Phone', 'type' => 'expense', 'icon' => '📶', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Travel', 'type' => 'expense', 'icon' => '✈️', 'created_at' => now(), 'updated_at' => now()],
         ];
 
         DB::table('categories')->insert($categories);
