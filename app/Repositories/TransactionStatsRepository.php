@@ -19,10 +19,12 @@ class TransactionStatsRepository
                      ->where('transactions.user_id', '=', $user->id);
             })
             ->where('category_user.user_id', $user->id)
-            ->groupBy('categories.id', 'categories.name')
+            ->groupBy('categories.id', 'categories.name', 'categories.icon', 'categories.type')
             ->select(
                 'categories.id',
                 'categories.name',
+                'categories.icon',
+                'categories.type',
                 DB::raw('COALESCE(SUM(transactions.amount), 0) as total_amount')
             )
             ->get();
@@ -30,14 +32,11 @@ class TransactionStatsRepository
 
     public function getMonthlySpending(User $user)
     {
-        $cacheKey = "user_{$user->id}_monthly_spending";
-
-        return Cache::remember($cacheKey, now()->addMinutes(5), function () use ($user) {
-            return Transaction::where('user_id', $user->id)
-                ->where('type', 'expense')
-                ->whereMonth('created_at', now()->month)
-                ->sum('amount');
-        });
+        return Transaction::where('user_id', $user->id)
+            ->where('type', 'expense')
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->sum('amount');
     }
 
     public function invalidateUserCache(User $user)
@@ -46,16 +45,15 @@ class TransactionStatsRepository
         Cache::forget("user_{$user->id}_monthly_spending");
     }
 
-    public function updateTotalBalance(User $user, Transaction $transaction)
+    public function updateTotalBalance($user, $transaction)
     {
-        $amount = $transaction->amount;
         if ($transaction->type === 'expense') {
-            $amount = -$amount;
+            $user->total_balance -= $transaction->amount;
+        } else {
+            $user->total_balance += $transaction->amount;
         }
         
-        $user->total_balance += $amount;
         $user->save();
-        
         return $user->total_balance;
-    }
+    }  
 }

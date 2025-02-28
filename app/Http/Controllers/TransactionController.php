@@ -22,26 +22,31 @@ class TransactionController extends Controller
             'description' => 'required|string',
             'amount' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
+            'payment_method_id' => 'required|exists:payment_methods,id',
             'type' => 'required|in:expense,income'
         ]);
 
         $transaction = Transaction::create([
             'user_id' => Auth::id(),
-            'description' => $validated['description'],
-            'amount' => $validated['amount'],
             'category_id' => $validated['category_id'],
-            'type' => $validated['type']
+            'payment_method_id' => $validated['payment_method_id'],
+            'type' => $validated['type'],
+            'amount' => $validated['amount'],
+            'description' => $validated['description'],
+            'date' => now(), 
         ]);
 
-        // Obtener estadísticas actualizadas
         $user = Auth::user();
+        // Actualizar el balance total
+        $totalBalance = $this->statsRepository->updateTotalBalance($user, $transaction);
         $categories = $this->statsRepository->getCategoryStats($user);
-        $totalBalance = $user->total_balance;
+        $monthlySpending = $this->statsRepository->getMonthlySpending($user);
 
         return response()->json([
             'success' => true,
             'categories' => $categories,
-            'totalBalance' => $totalBalance
+            'totalBalance' => $totalBalance,
+            'monthlySpending' => $monthlySpending
         ]);
     }
 }
