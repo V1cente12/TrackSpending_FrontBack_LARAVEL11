@@ -1,7 +1,7 @@
 <template>
   <div class="bg-white p-6 rounded-lg shadow-lg text-gray-800 overflow-hidden">
     <div class="overflow-x-auto scrollbar-hide" style="width: 100%; touch-action: auto;">
-      <div :style="{ width: containerWidth + 'px', height: '300px', marginLeft: categories.length === 1 ? '-200px' : '0' }">
+      <div :style="{ width: containerWidth + 'px', height: '350px', marginLeft: categories.length === 1 ? '-200px' : '0' }">
         <Bar :data="chartData" :options="chartOptions" :plugins="[labelsPlugin]" />
       </div>
     </div>
@@ -42,26 +42,25 @@ export default {
       afterDraw: (chart) => {
         const ctx = chart.ctx;
         const meta = chart.getDatasetMeta(0);
+        const xAxis = chart.scales.x;
+        const yAxis = chart.scales.y;
         
         meta.data.forEach((bar, index) => {
           const category = props.categories[index];
           const value = Math.abs(category.total_amount);
-          const isZero = value === 0;
           
           ctx.save();
-          ctx.fillStyle = 'white';
+          ctx.fillStyle = '#374151';
           ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
+          ctx.textBaseline = 'top';
           
-          // Category Name
-          ctx.font = '20px Arial';
-          const nameY = isZero ? bar.y + 25 : bar.y + bar.height - 35;
-          ctx.fillText(category.name, bar.x, nameY);
+          // Icon
+          ctx.font = '24px Arial';
+          ctx.fillText(category.icon, bar.x, yAxis.bottom + 10);
           
           // Amount Value
-          ctx.font = 'bold 15px arial';
-          const valueY = isZero ? bar.y + 45 : bar.y + bar.height - 15;
-          ctx.fillText(value, bar.x, valueY);
+          ctx.font = 'bold 14px Inter';
+          ctx.fillText(value, bar.x, yAxis.bottom + 40);
           
           ctx.restore();
         });
@@ -69,11 +68,11 @@ export default {
     }
 
     const chartData = computed(() => ({
-      labels: props.categories.map(cat => cat.name),
+      labels: Array(props.categories.length).fill(''),
       datasets: [{
         data: props.categories.map(cat => {
           const value = Math.abs(cat.total_amount);
-          return value === 0 ? 10 : value;
+          return value === 0 ? 0 : value;
         }),
         backgroundColor: Array(props.categories.length).fill('#424242'),
         borderSkipped: false,
@@ -86,6 +85,11 @@ export default {
     const chartOptions = {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: {
+          bottom: 50
+        }
+      },
       animation: {
         duration: 800,
         easing: 'easeOutQuart'
