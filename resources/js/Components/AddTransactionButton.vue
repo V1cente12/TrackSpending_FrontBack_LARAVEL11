@@ -57,6 +57,13 @@ const selectPaymentMethod = (method) => {
   form.payment_method_id = method.id;
 };
 
+const handleAmountInput = (event) => {
+  let value = event.target.value.replace(',', '.');
+  if (!isNaN(value) && value !== '') {
+    amount.value = value;
+  }
+};
+
 const submitTransaction = async () => {
   if (!selectedCategory.value) {
     alert('Please select a category');
@@ -154,12 +161,12 @@ const submitTransaction = async () => {
 
                 <!-- Amount Input -->
                 <input
-                  v-model="amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  :value="amount"
+                  @input="handleAmountInput"
+                  type="text"
                   inputmode="decimal"
                   placeholder="Amount"
+                  pattern="[0-9]*[.,]?[0-9]*"
                   class="w-full bg-transparent border-0 border-b border-gray-700 focus:border-gray-500 focus:ring-0 text-lg pb-2"
                 />
 
