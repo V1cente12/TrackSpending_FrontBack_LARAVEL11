@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, nextTick } from 'vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import TotalBalanceCard from '@/Components/TotalBalanceCard.vue';
 import MonthlySpendingCard from '@/Components/MonthlySpendingCard.vue';
@@ -10,6 +10,8 @@ import NavigationBar from '@/Components/NavigationBar.vue';
 const props = defineProps({
     currencySymbol: String,
     totalBalance: Number,
+    monthlySpending: Number,
+    paymentMethods: Array,
     categories: {
         type: Array,
         required: true,
@@ -19,10 +21,17 @@ const props = defineProps({
 
 const categories = ref(props.categories);
 const totalBalance = ref(props.totalBalance);
+const monthlySpending = ref(props.monthlySpending);
+const chartKey = ref(0);
 
-const updateDashboard = (data) => {
+const updateDashboard = async (data) => {
     categories.value = data.categories;
     totalBalance.value = data.totalBalance;
+    monthlySpending.value = data.monthlySpending;
+    
+    if (data.forceChartUpdate) {
+        chartKey.value += 1;
+    }
 };
 </script>
 
@@ -45,13 +54,17 @@ const updateDashboard = (data) => {
 
                 <!-- Gráficas de Categorías -->
                 <div class="mb-6">
-                    <CategoryChart :categories="categories" />
+                    <CategoryChart 
+                        :key="chartKey"
+                        :categories="categories" 
+                    />
                 </div>
 
                 <!-- Botón para añadir nueva transacción -->
                 <div class="mb-6">
                     <AddTransactionButton
                         :categories="categories"
+                        :payment-methods="paymentMethods"
                         @transaction-added="updateDashboard" 
                     />
                 </div>

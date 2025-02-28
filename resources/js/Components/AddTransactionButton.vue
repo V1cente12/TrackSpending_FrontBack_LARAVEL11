@@ -5,6 +5,10 @@ import { useForm } from '@inertiajs/vue3';
 import axios from 'axios';
 
 const props = defineProps({
+  paymentMethods: {
+    type: Array,
+    required: true
+  },
   categories: {
     type: Array,
     required: true
@@ -14,6 +18,7 @@ const props = defineProps({
 const emit = defineEmits(['transactionAdded']);
 const isModalOpen = ref(false);
 const selectedCategory = ref(null);
+const selectedPaymentMethod = ref(null);
 const transactionType = ref('expense');
 const description = ref('');
 const amount = ref('');
@@ -22,6 +27,7 @@ const form = useForm({
   description: '',
   amount: '',
   category_id: '',
+  payment_method_id: '',
   type: 'expense'
 });
 
@@ -37,6 +43,7 @@ const resetForm = () => {
   description.value = '';
   amount.value = '';
   selectedCategory.value = null;
+  selectedPaymentMethod.value = null;
   transactionType.value = 'expense';
 };
 
@@ -45,9 +52,19 @@ const selectCategory = (category) => {
   form.category_id = category.id;
 };
 
+const selectPaymentMethod = (method) => {
+  selectedPaymentMethod.value = method.id;
+  form.payment_method_id = method.id;
+};
+
 const submitTransaction = async () => {
   if (!selectedCategory.value) {
     alert('Please select a category');
+    return;
+  }
+
+  if (!selectedPaymentMethod.value) {
+    alert('Please select a payment method');
     return;
   }
 
@@ -60,7 +77,9 @@ const submitTransaction = async () => {
     if (response.data.success) {
       emit('transactionAdded', {
         categories: response.data.categories,
-        totalBalance: response.data.totalBalance
+        totalBalance: response.data.totalBalance,
+        monthlySpending: response.data.monthlySpending,
+        forceChartUpdate: true
       });
       resetForm();
       toggleModal();
@@ -137,26 +156,51 @@ const submitTransaction = async () => {
                 <input
                   v-model="amount"
                   type="number"
+                  step="0.01"
+                  min="0"
                   inputmode="decimal"
-                  pattern="[0-9]*"
                   placeholder="Amount"
                   class="w-full bg-transparent border-0 border-b border-gray-700 focus:border-gray-500 focus:ring-0 text-lg pb-2"
                 />
 
                 <!-- Categories -->
-                <div class="flex gap-3 overflow-x-auto py-2 no-scrollbar">
-                  <button
-                    type="button"
-                    v-for="category in categories"
-                    :key="category.id"
-                    @click="selectCategory(category)"
-                    :class="[
-                      'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm whitespace-nowrap',
-                      selectedCategory === category.id ? 'bg-blue-500' : 'bg-gray-800'
-                    ]"
-                  >
-                    {{ category.name }}
-                  </button>
+                <div class="space-y-2">
+                  <p class="text-sm text-gray-400">Categories</p>
+                  <div class="flex gap-3 overflow-x-auto py-2 no-scrollbar">
+                    <button
+                      type="button"
+                      v-for="category in categories"
+                      :key="category.id"
+                      @click="selectCategory(category)"
+                      :class="[
+                        'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm whitespace-nowrap',
+                        selectedCategory === category.id ? 'bg-blue-500' : 'bg-gray-800'
+                      ]"
+                    >
+                      <span class="text-xl">{{ category.icon }}</span>
+                      <span>{{ category.name }}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div class="space-y-2">
+                  <p class="text-sm text-gray-400">Payment Method</p>
+                  <div class="flex gap-3 overflow-x-auto py-2 no-scrollbar">
+                    <button
+                      type="button"
+                      v-for="method in paymentMethods"
+                      :key="method.id"
+                      @click="selectPaymentMethod(method)"
+                      :class="[
+                        'flex items-center gap-1.5 px-4 py-2 rounded-full text-sm whitespace-nowrap',
+                        selectedPaymentMethod === method.id ? 'bg-blue-500' : 'bg-gray-800'
+                      ]"
+                    >
+                      <span class="text-xl">{{ method.icon }}</span>
+                      <span>{{ method.name }}</span>
+                    </button>
+                  </div>
                 </div>
 
                 <!-- Type Selector -->
