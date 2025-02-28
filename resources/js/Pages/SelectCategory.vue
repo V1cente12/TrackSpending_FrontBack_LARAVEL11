@@ -40,6 +40,7 @@ const submit = () => {
                                     peer-checked:border-indigo-500 peer-checked:bg-indigo-50
                                     hover:border-gray-300 group">
                             <div class="flex flex-col items-center justify-center min-h-[60px]">
+                                <span class="text-2xl mb-1">{{ cat.icon }}</span>
                                 <span class="text-xs font-medium text-gray-900 group-hover:text-indigo-600">
                                     {{ cat.name }}
                                 </span>
