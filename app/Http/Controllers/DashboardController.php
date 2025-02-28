@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\User;
+use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\TransactionStatsRepository;
 
@@ -41,11 +42,15 @@ class DashboardController extends Controller
         $currencySymbol = $user->currency()->first()->symbol;
         $totalBalance = $user->total_balance;
         $categories = $this->statsRepository->getCategoryStats($user);
+        $paymentMethods = PaymentMethod::all();
+        $monthlySpending = $this->statsRepository->getMonthlySpending($user);
 
         return Inertia::render('Dashboard', [
             'currencySymbol' => $currencySymbol,
             'totalBalance' => $totalBalance,
-            'categories' => $categories
+            'categories' => $categories,
+            'paymentMethods' => $paymentMethods,
+            'monthlySpending' => $monthlySpending,
         ]);
     }
 }
