@@ -49,4 +49,22 @@ class TransactionController extends Controller
             'monthlySpending' => $monthlySpending
         ]);
     }
+    public function getCategoryTransactions($categoryId)
+    {
+        $transactions = Transaction::where('category_id', $categoryId)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($transaction) {
+                return [
+                    'id' => $transaction->id,
+                    'description' => $transaction->description,
+                    'amount' => $transaction->amount,
+                    'type' => $transaction->type,
+                    'created_at' => $transaction->created_at->format('M d, Y')
+                ];
+            });
+        return response()->json([
+            'transactions' => $transactions
+        ]);
+    }
 }

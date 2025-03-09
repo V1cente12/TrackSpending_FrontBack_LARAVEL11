@@ -23,7 +23,6 @@ Route::middleware([
     Route::post('/set-initial-balance', [InitialBalanceController::class, 'store'])->name('set-initial-balance');
     Route::get('/select-category', [CategoryController::class, 'show'])->name('select-category');
     Route::post('/set-category', [CategoryController::class, 'store'])->name('set-category');
-
-
     Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::get('/category-transactions/{categoryId}', [TransactionController::class, 'getCategoryTransactions'])->name('category-transactions');
 });
