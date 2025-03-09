@@ -1,6 +1,6 @@
 <script setup>
 import { ref, nextTick } from 'vue';
-import AppLayout from '@/Layouts/AppLayout.vue';
+//import AppLayout from '@/Layouts/AppLayout.vue';
 import TotalBalanceCard from '@/Components/TotalBalanceCard.vue';
 import MonthlySpendingCard from '@/Components/MonthlySpendingCard.vue';
 import CategoryChart from '@/Components/CategoryChart.vue';
@@ -37,39 +37,45 @@ const updateDashboard = async (data) => {
 
 <template>
     <AppLayout title="Dashboard">
-        <div class="h-full flex flex-col items-center justify-start pt-12 px-4">
-            <div class="w-full max-w-md">
-                <!-- Tarjetas con saldo total y gasto del mes -->
-                <div class="flex flex-row gap-4 mb-6">
-                    <TotalBalanceCard 
-                        :amount="totalBalance" 
-                        :currency-symbol="currencySymbol"
-                        class="flex-1"
-                    />
-                    <MonthlySpendingCard 
-                        :amount="monthlySpending" 
-                        class="flex-1"
-                    />
-                </div>
+        <div class="h-screen flex flex-col">
+            <div class="flex-1 overflow-y-auto pb-20">
+                <div class="flex flex-col items-center justify-start pt-12 px-4">
+                    <div class="w-full max-w-md">
+                        <!-- Tarjetas con saldo total y gasto del mes -->
+                        <div class="flex flex-row gap-4 mb-6">
+                            <TotalBalanceCard 
+                                :amount="totalBalance" 
+                                :currency-symbol="currencySymbol"
+                                class="flex-1"
+                            />
+                            <MonthlySpendingCard 
+                                :amount="monthlySpending" 
+                                class="flex-1"
+                            />
+                        </div>
 
-                <!-- Gráficas de Categorías -->
-                <div class="mb-6">
-                    <CategoryChart 
-                        :key="chartKey"
-                        :categories="categories" 
-                    />
-                </div>
+                        <!-- Gráficas de Categorías -->
+                        <div class="mb-6">
+                            <CategoryChart 
+                                :key="chartKey"
+                                :categories="categories" 
+                            />
+                        </div>
 
-                <!-- Botón para añadir nueva transacción -->
-                <div class="mb-6">
-                    <AddTransactionButton
-                        :categories="categories"
-                        :payment-methods="paymentMethods"
-                        @transaction-added="updateDashboard" 
-                    />
+                        <!-- Botón para añadir nueva transacción -->
+                        <div class="mb-6">
+                            <AddTransactionButton
+                                :categories="categories"
+                                :payment-methods="paymentMethods"
+                                @transaction-added="updateDashboard" 
+                            />
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <!-- Barra de navegación inferior -->
+            <!-- Barra de navegación inferior fija -->
+            <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white">
                 <NavigationBar />
             </div>
         </div>
