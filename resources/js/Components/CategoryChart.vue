@@ -97,7 +97,7 @@ export default {
     const isLoading = ref(false)
 
     const containerWidth = computed(() => {
-      return Math.max(props.categories.length * 80, 200)
+      return Math.max(props.categories.length * 95, 200)
     })
 
     const toggleModal = () => {
@@ -166,8 +166,8 @@ export default {
         backgroundColor: Array(props.categories.length).fill('#424242'),
         borderSkipped: false,
         borderRadius: 8,
-        barThickness: 65,
-        maxBarThickness: 65
+        barThickness: 75,
+        maxBarThickness: 75
       }]
     }))
 
@@ -190,15 +190,15 @@ export default {
         }
       },
       scales: {
-        x: {
-          grid: { display: false },
-          border: { display: false },
-          ticks: {
-            display: false
-          },
-          barPercentage: 0.4,
-          categoryPercentage: 0.8
+      x: {
+        grid: { display: false },
+        border: { display: false },
+        ticks: {
+          display: false
         },
+        barPercentage: 0.2,    // Reducido de 0.3 a 0.2
+        categoryPercentage: 0.5 // Reducido de 0.6 a 0.5
+      },
         y: {
           display: false,
           grid: { display: false },
