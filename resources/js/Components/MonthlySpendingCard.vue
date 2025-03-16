@@ -1,7 +1,7 @@
 <template>
   <div class="bg-gray-800 p-3 rounded-lg shadow-lg">
     <div class="flex justify-between items-center">
-      <h3 class="text-xl font-semibold text-white">Monthly</h3>
+      <h3 class="text-xl font-semibold text-gray-300">Monthly</h3>
       <button @click="toggleVisibility" class="text-gray-600 hover:text-gray-200">
         <i class="fas" :class="isHidden ? 'fa-eye-slash' : 'fa-eye'"></i>
       </button>
