@@ -3,17 +3,28 @@
     "short_name": "ViWallet",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#162a2b",
-    "theme_color": "#162a2b",
-    "icons": [
+    "background_color": "#e5e7eb",
+    "theme_color": "#e5e7eb",
+   "icons": [
       {
         "src": "/images/ViWallet.png",
         "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "/images/ViWallet.png",
+        "sizes": "384x384",
         "type": "image/png"
       },
       {
         "src": "/images/ViWallet.png",
         "sizes": "512x512",
+        "type": "image/png"
+      },
+      {
+        "src": "/images/ViWallet.png",
+        "sizes": "1024x1024",
         "type": "image/png"
       }
     ]
