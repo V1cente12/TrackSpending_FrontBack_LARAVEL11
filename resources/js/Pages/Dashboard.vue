@@ -50,6 +50,7 @@ const updateDashboard = async (data) => {
                             />
                             <MonthlySpendingCard 
                                 :amount="monthlySpending" 
+                                :currency-symbol="currencySymbol"
                                 class="flex-1"
                             />
                         </div>
@@ -75,7 +76,7 @@ const updateDashboard = async (data) => {
             </div>
 
             <!-- Barra de navegación inferior fija -->
-            <div class="fixed bottom-0 left-1/2 transform -translate-x-1/2 w-full max-w-md bg-white">
+            <div class="fixed bottom-0 w-full bg-transparent">
                 <NavigationBar />
             </div>
         </div>
