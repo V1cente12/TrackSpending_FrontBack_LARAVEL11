@@ -16,13 +16,14 @@
         @inertiaHead
 
         <link rel="manifest" href="{{ asset('manifest.json') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
         <script>
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register("{{ asset('serviceworker.js') }}");
             }
         </script>
     </head>
-    <body class="font-sans antialiased">
+    <body class="antialiased bg-gray-200">
         @inertia
     </body>
 </html>
