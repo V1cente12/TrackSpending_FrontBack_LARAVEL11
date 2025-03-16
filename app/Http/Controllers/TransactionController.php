@@ -49,6 +49,7 @@ class TransactionController extends Controller
             'monthlySpending' => $monthlySpending
         ]);
     }
+
     public function getCategoryTransactions($categoryId)
     {
         $transactions = Transaction::where('category_id', $categoryId)
@@ -63,6 +64,16 @@ class TransactionController extends Controller
                     'created_at' => $transaction->created_at->format('M d, Y')
                 ];
             });
+        return response()->json([
+            'transactions' => $transactions
+        ]);
+    }
+
+    public function getTransactionsByPeriod($period)
+    {
+        $user = Auth::user();
+        $transactions = $this->statsRepository->getTransactionsByPeriod($user, $period);
+
         return response()->json([
             'transactions' => $transactions
         ]);

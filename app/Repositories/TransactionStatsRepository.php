@@ -56,4 +56,28 @@ class TransactionStatsRepository
         $user->save();
         return $user->total_balance;
     }  
+
+    public function getTransactionsByPeriod(User $user, $period)
+    {
+        $query = Transaction::where('user_id', $user->id);
+
+        switch ($period) {
+            case 'day':
+                $query->whereDate('created_at', now());
+                break;
+            case 'week':
+                $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                break;
+            case 'month':
+                $query->whereMonth('created_at', now()->month)
+                     ->whereYear('created_at', now()->year);
+                break;
+            case 'all':
+                break;
+        }
+
+        return $query->orderBy('created_at', 'desc')
+                    ->with(['category', 'paymentMethod'])
+                    ->get();
+    }
 }
