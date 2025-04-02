@@ -16,7 +16,8 @@ class TransactionStatsRepository
             ->join('category_user', 'categories.id', '=', 'category_user.category_id')
             ->leftJoin('transactions', function($join) use ($user) {
                 $join->on('categories.id', '=', 'transactions.category_id')
-                     ->where('transactions.user_id', '=', $user->id);
+                    ->where('transactions.user_id', '=', $user->id)
+                    ->whereRaw('MONTH(transactions.date) = MONTH(CURRENT_DATE()) AND YEAR(transactions.date) = YEAR(CURRENT_DATE())');
             })
             ->where('category_user.user_id', $user->id)
             ->groupBy('categories.id', 'categories.name', 'categories.icon', 'categories.type')
