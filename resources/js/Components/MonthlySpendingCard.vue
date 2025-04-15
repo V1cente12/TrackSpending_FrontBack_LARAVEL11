@@ -7,7 +7,7 @@
       </button>
     </div>
     <p class="text-[1.75rem] font-bold text-red-600 mt-2" :class="{ 'blur-sm': isHidden }">
-      {{ currencySymbol }} {{ amount.toFixed(2) }}
+      {{ currencySymbol }} {{ amount }}
     </p>
   </div>
 </template>
