@@ -33,6 +33,7 @@ class CategorySeeder extends Seeder
             ['name' => 'Gaming', 'type' => 'expense', 'icon' => '🎮', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Internet & Phone', 'type' => 'expense', 'icon' => '📶', 'created_at' => now(), 'updated_at' => now()],
             ['name' => 'Travel', 'type' => 'expense', 'icon' => '✈️', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Pet', 'type' => 'expense', 'icon' => '🐶', 'created_at' => now(), 'updated_at' => now()],
         ];
 
         DB::table('categories')->insert($categories);
