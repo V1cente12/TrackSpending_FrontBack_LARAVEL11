@@ -28,6 +28,7 @@ class TransactionStatsRepository
                 'categories.type',
                 DB::raw('COALESCE(SUM(transactions.amount), 0) as total_amount')
             )
+            ->orderByRaw('ABS(COALESCE(SUM(transactions.amount), 0)) DESC')
             ->get();
     }
 
