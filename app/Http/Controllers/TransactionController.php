@@ -23,7 +23,8 @@ class TransactionController extends Controller
             'amount' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
             'payment_method_id' => 'required|exists:payment_methods,id',
-            'type' => 'required|in:expense,income'
+            'type' => 'required|in:expense,income',
+            'transaction_date' => 'required|date' 
         ]);
 
         $transaction = Transaction::create([
@@ -33,7 +34,7 @@ class TransactionController extends Controller
             'type' => $validated['type'],
             'amount' => $validated['amount'],
             'description' => $validated['description'],
-            'date' => now(), 
+            'date' => $validated['transaction_date'],
         ]);
 
         $user = Auth::user();

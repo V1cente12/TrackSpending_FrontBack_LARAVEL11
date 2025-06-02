@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { TransitionRoot, TransitionChild } from '@headlessui/vue';
 import { useForm } from '@inertiajs/vue3';
+import { DatePicker } from 'v-calendar';
 import axios from 'axios';
 
 const props = defineProps({
@@ -22,14 +23,21 @@ const selectedPaymentMethod = ref(null);
 const transactionType = ref('expense');
 const description = ref('');
 const amount = ref('');
+const selectedDate = ref(new Date());
+const showCalendar = ref(false);
 
 const form = useForm({
   description: '',
   amount: '',
   category_id: '',
   payment_method_id: '',
-  type: 'expense'
+  type: 'expense',
+  transaction_date: ''
 });
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString();
+};
 
 const toggleModal = () => {
   isModalOpen.value = !isModalOpen.value;
@@ -45,6 +53,8 @@ const resetForm = () => {
   selectedCategory.value = null;
   selectedPaymentMethod.value = null;
   transactionType.value = 'expense';
+  selectedDate.value = new Date();
+  showCalendar.value = false;
 };
 
 const selectCategory = (category) => {
@@ -78,6 +88,7 @@ const submitTransaction = async () => {
   form.description = description.value;
   form.amount = amount.value;
   form.type = transactionType.value;
+  form.transaction_date = selectedDate.value.toISOString().split('T')[0];
 
   try {
     const response = await axios.post('/transactions', form.data());
@@ -139,14 +150,23 @@ const submitTransaction = async () => {
               <!-- Modal Header -->
               <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-2">
-                  <span>Today</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                  </svg>
+                  <span>{{ formatDate(selectedDate) }}</span>
+                  <div class="relative">
+                    <svg @click="showCalendar = !showCalendar" 
+                         xmlns="http://www.w3.org/2000/svg" 
+                         class="h-4 w-4 cursor-pointer" 
+                         viewBox="0 0 20 20" 
+                         fill="currentColor">
+                      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    <DatePicker
+                      v-model="selectedDate"
+                      v-if="showCalendar"
+                      class="absolute top-6 left-0 z-50"
+                      @click-outside="showCalendar = false"
+                    />
+                  </div>
                 </div>
-                <button @click="toggleModal" class="text-gray-400">
-                  ✕
-                </button>
               </div>
 
               <!-- Transaction Form -->
