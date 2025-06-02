@@ -44,6 +44,24 @@
                 </button>
               </div>
   
+              <!-- Period Summary Section -->
+              <div class="mb-6 p-4 bg-gray-800 rounded-xl">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="text-sm text-gray-400">Total Expenses</p>
+                    <p class="text-xl text-red-500">Bs {{ periodTotal.expenses }}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-400">Total Income</p>
+                    <p class="text-xl text-green-500">Bs {{ periodTotal.income }}</p>
+                  </div>
+                  <div>
+                    <p class="text-sm text-gray-400">Net Balance</p>
+                    <p class="text-xl" :class="periodTotal.net >= 0 ? 'text-green-500' : 'text-red-500'">Bs {{ periodTotal.net }}</p>
+                  </div>
+                </div>
+              </div>
+  
               <!-- Transactions List -->
               <div class="space-y-4 h-[calc(85vh-120px)] overflow-y-auto">
                 <div v-if="isLoading" class="h-full flex items-center justify-center text-gray-400">
@@ -80,7 +98,7 @@
   </template>
   
   <script setup>
-  import { ref, watch } from 'vue'
+  import { ref, watch, computed } from 'vue'
   import { TransitionRoot, TransitionChild } from '@headlessui/vue'
   import axios from 'axios'
   
@@ -94,6 +112,23 @@
   const selectedPeriod = ref('Day')
   const transactions = ref([])
   const isLoading = ref(false)
+  
+  // Compute totals for the selected period
+  const periodTotal = computed(() => {
+    if (!transactions.value.length) return { expenses: 0, income: 0, net: 0 }
+    
+    return transactions.value.reduce((acc, transaction) => {
+      const amount = parseFloat(transaction.amount)
+      if (transaction.type === 'expense') {
+        acc.expenses += amount
+        acc.net -= amount
+      } else {
+        acc.income += amount
+        acc.net += amount
+      }
+      return acc
+    }, { expenses: 0, income: 0, net: 0 })
+  })
   
   const closeModal = () => {
     emit('close')
@@ -130,4 +165,19 @@
     }
   })
   
+  const dailyTotal = computed(() => {
+    if (!transactions.value.length) return { expenses: 0, income: 0, net: 0 }
+    
+    return transactions.value.reduce((acc, transaction) => {
+      const amount = parseFloat(transaction.amount)
+      if (transaction.type === 'expense') {
+        acc.expenses += amount
+        acc.net -= amount
+      } else {
+        acc.income += amount
+        acc.net += amount
+      }
+      return acc
+    }, { expenses: 0, income: 0, net: 0 })
+  })
   </script>
