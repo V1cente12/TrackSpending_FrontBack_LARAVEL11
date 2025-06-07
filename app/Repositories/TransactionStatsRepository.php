@@ -65,20 +65,20 @@ class TransactionStatsRepository
 
         switch ($period) {
             case 'day':
-                $query->whereDate('created_at', now());
+                $query->whereDate('date', now());
                 break;
             case 'week':
-                $query->whereBetween('created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                $query->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()]);
                 break;
             case 'month':
-                $query->whereMonth('created_at', now()->month)
-                     ->whereYear('created_at', now()->year);
+                $query->whereMonth('date', now()->month)
+                     ->whereYear('date', now()->year);
                 break;
             case 'all':
                 break;
         }
 
-        return $query->orderBy('created_at', 'desc')
+        return $query->orderBy('date', 'desc')
                     ->with(['category', 'paymentMethod'])
                     ->get();
     }
