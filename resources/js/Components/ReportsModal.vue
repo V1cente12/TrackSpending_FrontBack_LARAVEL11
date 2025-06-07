@@ -81,7 +81,7 @@
                       <div>
                         <p class="font-medium">{{ transaction.description }}</p>
                         <p class="text-sm text-gray-400">{{ transaction.category.name }}</p>
-                        <p class="text-xs text-gray-500">{{ formatDate(transaction.created_at) }}</p>
+                        <p class="text-xs text-gray-500">{{ formatDate(transaction.date) }}</p>
                       </div>
                     </div>
                     <p :class="transaction.type === 'expense' ? 'text-red-500' : 'text-green-500'">
