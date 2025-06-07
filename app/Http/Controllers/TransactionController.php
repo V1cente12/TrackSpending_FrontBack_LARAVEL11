@@ -54,9 +54,9 @@ class TransactionController extends Controller
     public function getCategoryTransactions($categoryId)
     {
         $transactions = Transaction::where('category_id', $categoryId)
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->orderBy('created_at', 'desc')
+            ->whereMonth('date', now()->month)
+            ->whereYear('date', now()->year)
+            ->orderBy('date', 'desc')
             ->get()
             ->map(function ($transaction) {
                 return [
@@ -64,7 +64,7 @@ class TransactionController extends Controller
                     'description' => $transaction->description,
                     'amount' => $transaction->amount,
                     'type' => $transaction->type,
-                    'created_at' => $transaction->created_at->format('M d, Y')
+                    'created_at' => $transaction->date->format('M d, Y')
                 ];
             });
         return response()->json([
