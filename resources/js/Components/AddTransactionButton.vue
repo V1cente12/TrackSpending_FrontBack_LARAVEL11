@@ -36,7 +36,11 @@ const form = useForm({
 });
 
 const formatDate = (date) => {
-  return new Date(date).toLocaleDateString();
+  return new Date(date).toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 };
 
 const toggleModal = () => {
@@ -88,7 +92,7 @@ const submitTransaction = async () => {
   form.description = description.value;
   form.amount = amount.value;
   form.type = transactionType.value;
-  form.transaction_date = selectedDate.value.toISOString().split('T')[0];
+  form.transaction_date = selectedDate.value.toLocaleDateString('en-CA');
 
   try {
     const response = await axios.post('/transactions', form.data());

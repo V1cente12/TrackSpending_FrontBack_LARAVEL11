@@ -64,7 +64,7 @@ class TransactionController extends Controller
                     'description' => $transaction->description,
                     'amount' => $transaction->amount,
                     'type' => $transaction->type,
-                    'created_at' => $transaction->date->format('M d, Y')
+                    'date' => $transaction->date->format('d M, Y')
                 ];
             });
         return response()->json([
