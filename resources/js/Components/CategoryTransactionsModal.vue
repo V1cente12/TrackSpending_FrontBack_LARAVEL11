@@ -29,25 +29,26 @@
                   <span class="text-xl">{{ category?.icon }}</span>
                   <span>{{ category?.name }}</span>
                 </div>
-                <button @click="$emit('close')" class="text-gray-400">
-                  ✕
-                </button>
               </div>
   
               <div class="space-y-4 h-[calc(85vh-120px)] overflow-y-auto">
+                <SearchTransactions 
+                  :transactions="transactions" 
+                  @search="filteredTransactions = $event"
+                />
                 <div v-if="isLoading" class="h-full flex items-center justify-center text-gray-400">
                   Loading transactions...
                 </div>
-                <div v-else-if="transactions.length === 0" class="h-full flex items-center justify-center text-gray-400">
+                <div v-else-if="filteredTransactions.length === 0" class="h-full flex items-center justify-center text-gray-400">
                   No transactions found
                 </div>
                 <div v-else class="pt-2">
-                  <div v-for="transaction in transactions" 
+                  <div v-for="transaction in filteredTransactions" 
                        :key="transaction.id"
                        class="flex justify-between items-center p-4 bg-gray-800 rounded-xl mb-3">
                     <div>
                       <p class="font-medium">{{ transaction.description }}</p>
-                      <p class="text-sm text-gray-400">{{ transaction.created_at }}</p>
+                      <p class="text-sm text-gray-400">{{ transaction.date }}</p>
                     </div>
                     <p :class="transaction.type === 'expense' ? 'text-red-500' : 'text-green-500'">
                       {{ transaction.type === 'expense' ? '-' : '+' }} Bs {{ transaction.amount }}
@@ -65,6 +66,7 @@
   <script setup>
   import { ref, watch } from 'vue'
   import { TransitionRoot, TransitionChild } from '@headlessui/vue'
+  import SearchTransactions from './SearchTransactions.vue'
   import axios from 'axios'
   
   const props = defineProps({
@@ -74,6 +76,7 @@
   
   const emit = defineEmits(['close'])
   const transactions = ref([])
+  const filteredTransactions = ref([])
   const isLoading = ref(false)
   
   const fetchTransactions = async () => {
@@ -83,9 +86,11 @@
     try {
       const response = await axios.get(`/category-transactions/${props.category.id}`)
       transactions.value = response.data.transactions
+      filteredTransactions.value = response.data.transactions
     } catch (error) {
       console.error('Error fetching transactions:', error)
       transactions.value = []
+      filteredTransactions.value = []
     } finally {
       isLoading.value = false
     }

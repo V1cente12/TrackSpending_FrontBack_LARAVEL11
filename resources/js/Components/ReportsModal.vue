@@ -64,14 +64,18 @@
   
               <!-- Transactions List -->
               <div class="space-y-4 h-[calc(85vh-120px)] overflow-y-auto">
+                <SearchTransactions 
+                  :transactions="transactions" 
+                  @search="filteredTransactions = $event"
+                />
                 <div v-if="isLoading" class="h-full flex items-center justify-center text-gray-400">
                   Loading transactions...
                 </div>
-                <div v-else-if="transactions.length === 0" class="h-full flex items-center justify-center text-gray-400">
+                <div v-else-if="filteredTransactions.length === 0" class="h-full flex items-center justify-center text-gray-400">
                   No transactions found
                 </div>
                 <div v-else class="pt-2">
-                  <div v-for="transaction in transactions" 
+                  <div v-for="transaction in filteredTransactions" 
                        :key="transaction.id"
                        class="flex justify-between items-center p-4 bg-gray-800 rounded-xl mb-3">
                     <div class="flex items-start gap-3">
@@ -101,6 +105,7 @@
   import { ref, watch, computed } from 'vue'
   import { TransitionRoot, TransitionChild } from '@headlessui/vue'
   import axios from 'axios'
+  import SearchTransactions from './SearchTransactions.vue'
   
   const props = defineProps({
     isOpen: Boolean
@@ -112,6 +117,7 @@
   const selectedPeriod = ref('Day')
   const transactions = ref([])
   const isLoading = ref(false)
+  const filteredTransactions = ref([])
   
   // Compute totals for the selected period
   const periodTotal = computed(() => {
@@ -139,6 +145,7 @@
     try {
       const response = await axios.get(`/transactions/${selectedPeriod.value.toLowerCase()}`)
       transactions.value = response.data.transactions
+      filteredTransactions.value = response.data.transactions
     } catch (error) {
       console.error('Error fetching transactions:', error)
       transactions.value = []
@@ -148,12 +155,13 @@
   }
   const formatDate = (dateString) => {
   const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric'
-  })
-}
+    return date.toLocaleDateString('es-BO', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric'
+    })
+  }
+
   
   watch(selectedPeriod, () => {
     fetchTransactions()
