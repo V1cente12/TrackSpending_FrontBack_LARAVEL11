@@ -24,9 +24,12 @@ class TransactionController extends Controller
             'category_id' => 'required|exists:categories,id',
             'payment_method_id' => 'required|exists:payment_methods,id',
             'type' => 'required|in:expense,income',
-            'transaction_date' => 'required|date' 
+            'transaction_date' => 'required|date'
         ]);
-
+    
+        $date = \Carbon\Carbon::parse($validated['transaction_date'])
+            ->setTimeFromTimeString(now()->format('H:i:s'));
+    
         $transaction = Transaction::create([
             'user_id' => Auth::id(),
             'category_id' => $validated['category_id'],
@@ -34,7 +37,7 @@ class TransactionController extends Controller
             'type' => $validated['type'],
             'amount' => $validated['amount'],
             'description' => $validated['description'],
-            'date' => $validated['transaction_date'],
+            'date' => $date,
         ]);
 
         $user = Auth::user();
