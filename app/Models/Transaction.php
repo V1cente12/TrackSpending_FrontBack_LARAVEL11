@@ -13,7 +13,7 @@ class Transaction extends Model
         'user_id', 'category_id', 'type', 'amount', 'date', 'description', 'payment_method_id',
     ];
     protected $casts = [
-        'date' => 'date',
+        'date' => 'datetime',
     ];
     public function user()
     {
