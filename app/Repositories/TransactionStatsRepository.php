@@ -36,8 +36,8 @@ class TransactionStatsRepository
     {
         return Transaction::where('user_id', $user->id)
             ->where('type', 'expense')
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
+            ->whereMonth('date', now()->month)
+            ->whereYear('date', now()->year)
             ->sum('amount');
     }
 
