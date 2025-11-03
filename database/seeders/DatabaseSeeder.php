@@ -17,6 +17,10 @@ class DatabaseSeeder extends Seeder
             //CurrencySeeder::class,
             CategorySeeder::class,
             PaymentMethodSeeder::class,
+
+CurrencySeeder::class,
+        CategorySeeder2::class,
+
         ]);
 
         User::factory()->create([
