@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trackspending_app
+    ports:
+      - "9000:80"
+      - "5174:5174"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+    environment:
+      APACHE_DOCUMENT_ROOT: /var/www/html/public
+
+  mysql:
+    image: mysql:8.0
+    container_name: trackspending_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: trackspending
+    ports:
+      - "3308:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:
