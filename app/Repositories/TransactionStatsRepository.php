@@ -49,15 +49,20 @@ class TransactionStatsRepository
 
     public function updateTotalBalance($user, $transaction)
     {
+        // Actualización atómica en SQL con aritmética DECIMAL, sin floats en PHP.
+        $query = User::whereKey($user->id);
+
         if ($transaction->type === 'expense') {
-            $user->total_balance -= $transaction->amount;
+            $query->decrement('total_balance', $transaction->amount);
         } else {
-            $user->total_balance += $transaction->amount;
+            $query->increment('total_balance', $transaction->amount);
         }
-        
-        $user->save();
-        return $user->total_balance;
-    }  
+
+        $user->total_balance = User::whereKey($user->id)->value('total_balance');
+        $user->syncOriginalAttribute('total_balance');
+
+        return (float) $user->total_balance;
+    }
 
     public function getTransactionsByPeriod(User $user, $period)
     {

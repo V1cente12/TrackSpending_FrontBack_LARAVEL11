@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Repositories\TransactionStatsRepository;
 
 class TransactionController extends Controller
@@ -30,19 +32,28 @@ class TransactionController extends Controller
         $date = \Carbon\Carbon::parse($validated['transaction_date'])
             ->setTimeFromTimeString(now()->format('H:i:s'));
     
-        $transaction = Transaction::create([
-            'user_id' => Auth::id(),
-            'category_id' => $validated['category_id'],
-            'payment_method_id' => $validated['payment_method_id'],
-            'type' => $validated['type'],
-            'amount' => $validated['amount'],
-            'description' => $validated['description'],
-            'date' => $date,
-        ]);
+        [$user, $totalBalance] = DB::transaction(function () use ($validated, $date) {
+            // Bloquear al usuario antes del INSERT evita perder actualizaciones concurrentes del saldo
+            // y el deadlock causado por el bloqueo de la foreign key al insertar en transactions.
+            $user = User::whereKey(Auth::id())->lockForUpdate()->firstOrFail();
 
-        $user = Auth::user();
-        // Actualizar el balance total
-        $totalBalance = $this->statsRepository->updateTotalBalance($user, $transaction);
+            $transaction = Transaction::create([
+                'user_id' => $user->id,
+                'category_id' => $validated['category_id'],
+                'payment_method_id' => $validated['payment_method_id'],
+                'type' => $validated['type'],
+                'amount' => $validated['amount'],
+                'description' => $validated['description'],
+                'date' => $date,
+            ]);
+
+            // Usar el monto tal como lo guardó MySQL (DECIMAL(10,2)).
+            $transaction->refresh();
+
+            // Actualizar el balance total
+            return [$user, $this->statsRepository->updateTotalBalance($user, $transaction)];
+        });
+
         $categories = $this->statsRepository->getCategoryStats($user);
         $monthlySpending = $this->statsRepository->getMonthlySpending($user);
 
@@ -56,7 +67,8 @@ class TransactionController extends Controller
 
     public function getCategoryTransactions($categoryId)
     {
-        $transactions = Transaction::where('category_id', $categoryId)
+        $transactions = Transaction::where('user_id', Auth::id())
+            ->where('category_id', $categoryId)
             ->whereMonth('date', now()->month)
             ->whereYear('date', now()->year)
             ->orderBy('date', 'desc')
